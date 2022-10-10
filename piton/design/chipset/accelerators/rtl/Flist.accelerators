@@ -31,6 +31,7 @@
 // io_ctrl_top.v
 //bram_map.v
 //ciop_iob.v
+define.tmp.h
 nvlink_top.v
 axilite_noc_bridge.v
 noc_response_axilite.v

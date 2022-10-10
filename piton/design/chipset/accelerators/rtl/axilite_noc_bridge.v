@@ -71,6 +71,16 @@ module axilite_noc_bridge #(
 `define MSG_TYPE_LOAD        2'd1 // Load Request
 `define MSG_TYPE_STORE       2'd2 // Store Request
 
+
+`define MIN_NOC_DATA_WIDTH      64 // 8 Bytes
+`define NOC_HDR_LEN             3
+`define MSG_STATE_IDLE          2'd0
+`define MSG_STATE_HEADER        2'd1
+`define MSG_STATE_NOC_DATA      2'd2
+
+localparam NOC_PAYLOAD_LEN = (AXI_LITE_DATA_WIDTH < `MIN_NOC_DATA_WIDTH) ?
+                        3'b1 : AXI_LITE_DATA_WIDTH/`MIN_NOC_DATA_WIDTH;
+                        
 /* flit fields */
 reg [`NOC_DATA_WIDTH-1:0]               msg_address;
 reg [`MSG_LENGTH_WIDTH-1:0]             msg_length;
@@ -119,6 +129,15 @@ wire [`C_M_AXI_LITE_ADDR_WIDTH-1:0]     araddr_fifo_wdata;
 wire                                    araddr_fifo_empty;
 wire [`C_M_AXI_LITE_ADDR_WIDTH-1:0]     araddr_fifo_out;
 reg                                     araddr_fifo_ren;
+
+
+wire                                    fifo_has_packet;
+wire                                    noc_store_done;
+wire                                    noc_load_done;
+wire [`MIN_NOC_DATA_WIDTH-1:0]          out_data[0:NOC_PAYLOAD_LEN-1];
+reg                                     noc_last_header;
+reg                                     noc_last_data;
+reg [2:0]                               noc_cnt;
 
 
 /* Dump store addr and data to file. */
@@ -319,19 +338,7 @@ assign araddr_fifo_ren = (noc_load_done && !araddr_fifo_empty);
 /* start the state machine when fifo is not empty and noc is ready 
 * We need to toggle between address and data fifos.
 */
-`define MIN_NOC_DATA_WIDTH      64 // 8 Bytes
-`define NOC_HDR_LEN             3
-`define MSG_STATE_IDLE          2'd0
-`define MSG_STATE_HEADER        2'd1
-`define MSG_STATE_NOC_DATA      2'd2
 
-wire                                    fifo_has_packet;
-wire                                    noc_store_done;
-wire                                    noc_load_done;
-wire [`MIN_NOC_DATA_WIDTH-1:0]          out_data[0:NOC_PAYLOAD_LEN-1];
-reg                                     noc_last_header;
-reg                                     noc_last_data;
-reg [2:0]                               noc_cnt;
 
 assign fifo_has_packet = (type_fifo_out == `MSG_TYPE_STORE) ? (!awaddr_fifo_empty && !wdata_fifo_empty) :
                         (type_fifo_out == `MSG_TYPE_LOAD) ? !araddr_fifo_empty : 1'b0;
@@ -339,8 +346,7 @@ assign fifo_has_packet = (type_fifo_out == `MSG_TYPE_STORE) ? (!awaddr_fifo_empt
 assign noc_store_done = noc_last_data && type_fifo_out == `MSG_TYPE_STORE;
 assign noc_load_done = noc_last_header && type_fifo_out == `MSG_TYPE_LOAD;
 
-localparam NOC_PAYLOAD_LEN = (AXI_LITE_DATA_WIDTH < `MIN_NOC_DATA_WIDTH) ?
-                        3'b1 : AXI_LITE_DATA_WIDTH/`MIN_NOC_DATA_WIDTH;
+
 
 generate begin
     genvar k;

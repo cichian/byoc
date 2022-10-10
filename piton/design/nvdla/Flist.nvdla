@@ -24,6 +24,8 @@ hw/outdir/nv_small/vmod/vlibs/p_SSYNC3DO.v
 hw/outdir/nv_small/vmod/nvdla/car/NV_NVDLA_sync3d_s.v
 hw/outdir/nv_small/vmod/vlibs/sync3d_s_ppp.v
 hw/outdir/nv_small/vmod/vlibs/p_SSYNC3DO_S_PPP.v
+hw/vmod/vlibs/nv_assert_no_x.vlib
+
 
 hw/outdir/nv_small/vmod/nvdla/cfgrom/NV_NVDLA_CFGROM_rom.v
 hw/outdir/nv_small/vmod/nvdla/cfgrom/NV_NVDLA_cfgrom.v

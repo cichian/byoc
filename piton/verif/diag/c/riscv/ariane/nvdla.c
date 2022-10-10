@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h> // added by ci-chian
 #include "../piton/verif/diag/c/riscv/ariane/mmio.h"
 #include "../piton/verif/diag/c/riscv/ariane/nvdla_glb.h"
 #include "../piton/verif/diag/c/riscv/ariane/nvdla_cdp.h"
