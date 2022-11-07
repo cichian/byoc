@@ -42,6 +42,7 @@ axi2apb_mux.v
 axi2apb_rd.v
 axi2apb_wr.v
 prgen_fifo.v
+strb2mask.v
 //slave_ar_buffer_i.v
 //slave_aw_buffer_i.v
 //slave_w_buffer_i.v

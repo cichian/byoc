@@ -291,8 +291,41 @@ generate
     end
 endgenerate
 
+always@ (posedge clk) begin 
+    if (rst) begin
+        m_axi_bresp <= 2'b0;
+        m_axi_bvalid <= 0;
+    end
+    /*else if (!(noc_io_go)) begin
+        m_axi_bresp <= 2'b0;
+        m_axi_bvalid <= 0;
+    end */
+    else if (noc_io_go && (noc_data_in[`MSG_TYPE] == `MSG_TYPE_NC_STORE_MEM_ACK)) begin
+        m_axi_bresp <= 2'b0;
+        m_axi_bvalid <= 1;
+    end 
+    else begin 
+        m_axi_bresp <= 2'b0;
+        m_axi_bvalid <= 0;
+    end 
+end 
+
+reg [15:0] bresp_count;
+
+always@(posedge clk) begin 
+    if (rst) 
+        bresp_count <= 0;
+    else if (m_axi_bvalid) 
+        bresp_count <= bresp_count + 1;
+end 
+
+
+
+
 assign m_axi_rvalid = ren;
 assign m_axi_rdata = rdata;
 assign m_axi_rresp = {AXI_LITE_RESP_WIDTH{1'b1}};
+
+
 
 endmodule

@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <stdio.h> // added by ci-chian
+//#include <stdio.h> // added by ci-chian
 #include "../piton/verif/diag/c/riscv/ariane/mmio.h"
 #include "../piton/verif/diag/c/riscv/ariane/nvdla_glb.h"
 #include "../piton/verif/diag/c/riscv/ariane/nvdla_cdp.h"
@@ -391,6 +391,7 @@ int main(void)
     reg_write(CDP_D_DST_SURFACE_STRIDE, 0x800);
     // CDP_D_DST_SURFACE_STRIDE_0.DST_SURFACE_STRIDE:0x40
     reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x80000000);
+    //reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x80001000); // fix is here
     // CDP_RDMA_D_SRC_BASE_ADDR_LOW_0.SRC_BASE_ADDR_LOW:0x4000000
     reg_write(CDP_D_DST_DMA_CFG, 0x1);
     // CDP_D_DST_DMA_CFG_0.DST_RAM_TYPE:MC : 0x1
@@ -415,7 +416,8 @@ int main(void)
     reg_write(CDP_D_PERF_ENABLE, 0x0);
     // CDP_D_PERF_ENABLE_0.LUT_EN:DISABLE : 0x0
     // CDP_D_PERF_ENABLE_0.DMA_EN:DISABLE : 0x0
-    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_HIGH, 0x0);
+    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_HIGH, 0x00);
+    //reg_write(CDP_RDMA_D_SRC_BASE_ADDR_HIGH, 0x80001100); // fix is here
     // CDP_RDMA_D_SRC_BASE_ADDR_HIGH_0.SRC_BASE_ADDR_HIGH:0x0
     reg_write(CDP_D_DST_BASE_ADDR_HIGH, 0x0);
     // CDP_D_DST_BASE_ADDR_HIGH_0.DST_BASE_ADDR_HIGH:0x0
@@ -450,7 +452,7 @@ int main(void)
     reg_write(CDP_RDMA_D_OP_ENABLE,0x1);
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP, end   --
     //----------## Layer:CDP_0: operation enable, end----------
-
+    
     while (reg_read(GLB_INTR_STATUS) == 0);
 
     printf("TEST PASSED");
