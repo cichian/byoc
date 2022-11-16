@@ -8,6 +8,23 @@
 #define reg_write(addr,val) reg_write32(NVDLA_BASE+addr,val)
 #define reg_read(addr) reg_read32(NVDLA_BASE+addr)
 
+#ifndef _MK_MASK_CONST
+  #define _MK_MASK_CONST(_constant_) _constant_
+#endif
+
+#ifndef _MK_FIELD_CONST
+  #define _MK_FIELD_CONST(_mask_, _shift_) (_MK_MASK_CONST(_mask_) << _MK_SHIFT_CONST(_shift_))
+#endif
+
+#ifndef _MK_SHIFT_CONST
+  #define _MK_SHIFT_CONST(_constant_) _constant_
+#endif
+
+#define GLB_S_INTR_MASK_0_CDP_DONE_MASK0_SHIFT			_MK_SHIFT_CONST(2)
+#define GLB_S_INTR_MASK_0_CDP_DONE_MASK0_FIELD			_MK_FIELD_CONST(0x1, GLB_S_INTR_MASK_0_CDP_DONE_MASK0_SHIFT)
+#define GLB_S_INTR_MASK_0_CDP_DONE_MASK1_SHIFT			_MK_SHIFT_CONST(3)
+#define GLB_S_INTR_MASK_0_CDP_DONE_MASK1_FIELD			_MK_FIELD_CONST(0x1, GLB_S_INTR_MASK_0_CDP_DONE_MASK1_SHIFT)
+
 int main(void)
 {
     //----------## Layer:CDP_0: cross layer dependency, begin----------
@@ -390,8 +407,8 @@ int main(void)
     // CDP_D_DATOUT_OFFSET_0.DATOUT_OFFSET:0x80
     reg_write(CDP_D_DST_SURFACE_STRIDE, 0x800);
     // CDP_D_DST_SURFACE_STRIDE_0.DST_SURFACE_STRIDE:0x40
-    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x80000000);
-    //reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x80001000); // fix is here
+    //reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x80000000);
+    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x80001000); // fix is here
     // CDP_RDMA_D_SRC_BASE_ADDR_LOW_0.SRC_BASE_ADDR_LOW:0x4000000
     reg_write(CDP_D_DST_DMA_CFG, 0x1);
     // CDP_D_DST_DMA_CFG_0.DST_RAM_TYPE:MC : 0x1
@@ -416,8 +433,8 @@ int main(void)
     reg_write(CDP_D_PERF_ENABLE, 0x0);
     // CDP_D_PERF_ENABLE_0.LUT_EN:DISABLE : 0x0
     // CDP_D_PERF_ENABLE_0.DMA_EN:DISABLE : 0x0
-    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_HIGH, 0x00);
-    //reg_write(CDP_RDMA_D_SRC_BASE_ADDR_HIGH, 0x80001100); // fix is here
+    //reg_write(CDP_RDMA_D_SRC_BASE_ADDR_HIGH, 0x00);
+    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_HIGH, 0x80001100); // fix is here
     // CDP_RDMA_D_SRC_BASE_ADDR_HIGH_0.SRC_BASE_ADDR_HIGH:0x0
     reg_write(CDP_D_DST_BASE_ADDR_HIGH, 0x0);
     // CDP_D_DST_BASE_ADDR_HIGH_0.DST_BASE_ADDR_HIGH:0x0
@@ -453,7 +470,7 @@ int main(void)
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP, end   --
     //----------## Layer:CDP_0: operation enable, end----------
     
-    while (reg_read(GLB_INTR_STATUS) == 0);
+    while ((reg_read(GLB_INTR_STATUS) & GLB_S_INTR_MASK_0_CDP_DONE_MASK1_FIELD)  == 0);
 
     printf("TEST PASSED");
     

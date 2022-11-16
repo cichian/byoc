@@ -64,11 +64,7 @@ input                                 ok_iob
 `endif
 );
 
-`ifndef VERILATOR
-initial begin
-        $fsdbDumpvars(0, cmp_top, "+all");
-end
-`endif
+
 
 //////////////////////
 // Type Declarations
